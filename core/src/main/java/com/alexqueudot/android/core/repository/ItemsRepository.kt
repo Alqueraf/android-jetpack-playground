@@ -8,5 +8,5 @@ import io.reactivex.Single
  */
 interface ItemsRepository {
 
-    fun getItems(): Single<List<Item>>
+    fun getItems(refresh: Boolean): Single<List<Item>>
 }

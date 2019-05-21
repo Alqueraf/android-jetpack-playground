@@ -11,8 +11,8 @@ import io.reactivex.Single
 class GetItemsUseCase private constructor() {
 
     companion object {
-        operator fun invoke(repository: ItemsRepository): Single<List<Item>> {
-            return repository.getItems()
+        operator fun invoke(repository: ItemsRepository, refresh: Boolean): Single<List<Item>> {
+            return repository.getItems(refresh)
         }
     }
 }

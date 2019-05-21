@@ -1,5 +1,6 @@
-package com.alexqueudot.android.data.repository.remote
+package com.alexqueudot.android.data.repository.source.remote.api
 
+import com.alexqueudot.android.data.repository.source.remote.ApiItemsResponse
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
