@@ -8,7 +8,7 @@ import io.reactivex.Single
  * Created by alex on 2019-05-20.
  */
 
-class GetItemsUseCase private constructor() {
+class GetItemListUseCase private constructor() {
 
     companion object {
         operator fun invoke(repository: ItemsRepository, refresh: Boolean): Single<List<Item>> {

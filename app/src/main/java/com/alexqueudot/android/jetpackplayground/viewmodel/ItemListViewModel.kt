@@ -3,7 +3,7 @@ package com.alexqueudot.android.jetpackplayground.viewmodel
 import androidx.lifecycle.*
 import com.alexqueudot.android.core.entity.Item
 import com.alexqueudot.android.core.repository.ItemsRepository
-import com.alexqueudot.android.core.usecase.GetItemsUseCase
+import com.alexqueudot.android.core.usecase.GetItemListUseCase
 import com.alexqueudot.android.jetpackplayground.di.app
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -18,7 +18,7 @@ class ItemListViewModel(private val itemsRepository: ItemsRepository = app().ite
     }
 
     fun refreshItems(refresh: Boolean = false) {
-        val disposable = GetItemsUseCase(itemsRepository, refresh)
+        val disposable = GetItemListUseCase(itemsRepository, refresh)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe(items::postValue) { onError(it) }

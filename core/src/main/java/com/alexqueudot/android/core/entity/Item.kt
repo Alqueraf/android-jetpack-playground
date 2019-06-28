@@ -8,8 +8,8 @@ data class Item (
     val id: Int,
     val title: String?,
     val url: String?,
-    val score: Int,
-    val isAnswered: Boolean
+    val score: Int?,
+    val isAnswered: Boolean?
 ){
 }
 
