@@ -3,19 +3,18 @@ package com.alexqueudot.android.data.repository
 import com.alexqueudot.android.core.entity.Item
 import com.alexqueudot.android.core.repository.ItemsRepository
 import com.alexqueudot.android.data.di.data
+import com.alexqueudot.android.data.repository.datasource.memory.MemoryDataSource
+import com.alexqueudot.android.data.repository.datasource.remote.api.ApiDataSource
+import io.reactivex.Maybe
 import io.reactivex.Single
 
 /**
  * Created by alex on 2019-05-20.
  */
 
-class DataItemsRepository() : ItemsRepository {
-
-    private val remoteDataSource = data().remoteDataSource
-    private val localDataSource = data().localDataSource
+class DataItemsRepository(private val remoteDataSource: ApiDataSource = data().apiDataSource, private val localDataSource: MemoryDataSource = data().memoryDataSource) : ItemsRepository {
 
     override fun getItems(refresh: Boolean): Single<List<Item>> {
-        // TODO: Handle API Error
         return if (refresh) {
             remoteDataSource.getItems().doOnSuccess { localDataSource.saveItems(it) }
         } else {
@@ -26,16 +25,8 @@ class DataItemsRepository() : ItemsRepository {
         }
     }
 
-//    companion object {
-//        @Volatile
-//        private var _instance: DataItemsRepository? = null
-//        val instance: DataItemsRepository
-//            get() {
-//                return _instance ?: synchronized(this) {
-//                    DataItemsRepository().also {
-//                        _instance = it
-//                    }
-//                }
-//            }
-//    }
+    override fun getItem(itemId: Int): Single<Item> {
+        return Maybe.concat(localDataSource.getItem(itemId), remoteDataSource.getItem(itemId))
+            .firstOrError()
+    }
 }

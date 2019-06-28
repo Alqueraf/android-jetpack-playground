@@ -1,4 +1,4 @@
-package com.alexqueudot.android.data.repository.source.remote
+package com.alexqueudot.android.data.repository.datasource.remote
 
 import com.alexqueudot.android.core.entity.Item
 import com.google.gson.annotations.SerializedName

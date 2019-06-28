@@ -5,10 +5,18 @@
             app:startDestination="@id/itemListFragment">
 
     <fragment android:id="@+id/itemListFragment"
-              android:name="com.alexqueudot.android.jetpackplayground.items.ItemListFragment"
-              android:label="item_list_fragment" tools:layout="@layout/item_list_fragment">
-        <action android:id="@+id/action_itemListFragment_to_placeholder" app:destination="@id/placeholder"
-                app:enterAnim="@anim/nav_default_enter_anim" app:exitAnim="@anim/nav_default_enter_anim"/>
+              android:name="com.alexqueudot.android.jetpackplayground.fragment.ItemListFragment"
+              tools:layout="@layout/item_list_fragment" android:label="Jetpack Playground">
+        <action android:id="@+id/action_itemListFragment_to_itemDetailFragment"
+                app:destination="@id/itemDetailFragment" app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim" app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim">
+            <argument android:defaultValue="-1" android:name="itemId"/>
+        </action>
     </fragment>
-    <fragment android:id="@+id/placeholder"/>
+    <fragment android:id="@+id/itemDetailFragment"
+              android:name="com.alexqueudot.android.jetpackplayground.fragment.ItemDetailFragment"
+              tools:layout="@layout/item_detail_fragment" android:label="{itemId}">
+        <argument android:name="itemId" app:argType="integer"/>
+    </fragment>
 </navigation>
