@@ -1,13 +1,11 @@
 package com.alexqueudot.android.jetpackplayground.fragment
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,11 +16,12 @@ import com.alexqueudot.android.jetpackplayground.adapter.MarginItemDecoration
 import com.alexqueudot.android.jetpackplayground.adapter.OnItemClickListener
 import com.alexqueudot.android.jetpackplayground.viewmodel.ItemListViewModel
 import kotlinx.android.synthetic.main.item_list_fragment.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class ItemListFragment : Fragment() {
 
-    private lateinit var viewModel: ItemListViewModel
+    private val viewModel by viewModel<ItemListViewModel>()
 
     private fun onListItemClick(item: Item) {
         // Navigate to Detail
@@ -66,7 +65,7 @@ class ItemListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(ItemListViewModel::class.java)
+        viewModel.refreshItems(true)
         initUI()
     }
 

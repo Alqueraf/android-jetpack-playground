@@ -2,16 +2,22 @@ package com.alexqueudot.android.jetpackplayground.di
 
 import com.alexqueudot.android.core.repository.ItemsRepository
 import com.alexqueudot.android.data.repository.DataItemsRepository
+import com.alexqueudot.android.jetpackplayground.viewmodel.ItemDetailViewModel
+import com.alexqueudot.android.jetpackplayground.viewmodel.ItemListViewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
 
 /**
  * Created by alex on 2019-05-21.
  */
 
-fun app(): AppComponent = AppModule
+val appModule = module {
+    // region: ViewModels
 
-interface AppComponent {
-    val itemsRepository: ItemsRepository
-}
-object AppModule: AppComponent {
-    override val itemsRepository = DataItemsRepository()
+    // ListViewModel
+    viewModel { ItemListViewModel(itemsRepository = get()) }
+    // DetailViewModel
+    viewModel { ItemDetailViewModel (itemsRepository = get()) }
+
+    // endregion
 }
