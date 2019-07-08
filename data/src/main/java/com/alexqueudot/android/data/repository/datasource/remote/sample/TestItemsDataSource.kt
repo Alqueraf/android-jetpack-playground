@@ -10,6 +10,7 @@ import io.reactivex.Single
 /**
  * Created by alex on 2019-05-21.
  */
+@Deprecated("Just used for initial api mock")
 class TestItemsDataSource {
 
     fun getItems(): Single<List<Item>> {

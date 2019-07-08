@@ -1,8 +1,6 @@
 package com.alexqueudot.android.data.repository.datasource.memory
 
 import com.alexqueudot.android.core.entity.Item
-import io.reactivex.Maybe
-import io.reactivex.Single
 
 /**
  * Created by alex on 2019-05-20.
@@ -11,19 +9,17 @@ import io.reactivex.Single
 class MemoryDataSource {
     private var items: List<Item>? = null
 
-    fun getItems(): Single<List<Item>> {
-        return Single.just(items ?: ArrayList())
+    suspend fun getItems(): List<Item> {
+        return items ?: emptyList()
     }
 
-    fun saveItems(items: List<Item>): Single<Boolean> {
+    suspend fun saveItems(items: List<Item>): Boolean {
         this.items = items
-        return Single.just(true)
+        return true
     }
 
-    fun getItem(itemId: Int): Maybe<Item> {
-        return items?.firstOrNull { it.id == itemId }?.let {
-            Maybe.just(it)
-        } ?: Maybe.empty()
+    suspend fun getItem(itemId: Int): Item? {
+        return items?.firstOrNull { it.id == itemId }
     }
 
 }

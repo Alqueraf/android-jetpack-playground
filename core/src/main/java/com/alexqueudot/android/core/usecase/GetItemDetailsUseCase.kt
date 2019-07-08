@@ -2,7 +2,6 @@ package com.alexqueudot.android.core.usecase
 
 import com.alexqueudot.android.core.entity.Item
 import com.alexqueudot.android.core.repository.ItemsRepository
-import io.reactivex.Single
 
 /**
  * Created by alex on 2019-05-20.
@@ -11,7 +10,7 @@ import io.reactivex.Single
 class GetItemDetailsUseCase private constructor() {
 
     companion object {
-        operator fun invoke(repository: ItemsRepository, itemId: Int): Single<Item> {
+        suspend operator fun invoke(repository: ItemsRepository, itemId: Int): Item? {
             return repository.getItem(itemId)
         }
     }

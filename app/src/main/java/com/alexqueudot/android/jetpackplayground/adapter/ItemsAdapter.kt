@@ -3,7 +3,6 @@ package com.alexqueudot.android.jetpackplayground.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.alexqueudot.android.core.entity.Item
 import com.alexqueudot.android.jetpackplayground.R
@@ -12,13 +11,16 @@ import kotlinx.android.synthetic.main.row_item.view.*
 /**
  * Created by alex on 2019-05-21.
  */
-class ItemsAdapter(items: List<Item>? = null, val itemClickListener: OnItemClickListener<Item>? = null): RecyclerView.Adapter<ItemsAdapter.ItemViewHolder>() {
+class ItemsAdapter(items: List<Item>? = null, val itemClickListener: OnItemClickListener<Item>? = null) :
+    RecyclerView.Adapter<ItemsAdapter.ItemViewHolder>() {
 
     var items: List<Item>? = items
-    set(value) {
-        field = value
-        notifyDataSetChanged()
-    }
+        set(value) {
+            if (field != value) {
+                field = value
+                notifyDataSetChanged()
+            }
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.row_item, parent, false)
@@ -30,15 +32,14 @@ class ItemsAdapter(items: List<Item>? = null, val itemClickListener: OnItemClick
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        items?.getOrNull(position)?.let {item ->
+        items?.getOrNull(position)?.let { item ->
             holder.textView.text = item.title
             holder.bind(item, itemClickListener)
         }
-
     }
 
 
-    class ItemViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val container = itemView
         val textView = itemView.text
 

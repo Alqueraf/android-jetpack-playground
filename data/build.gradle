@@ -40,10 +40,12 @@ dependencies {
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofit_version"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$rootProject.retrofit_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.okhttp_version"
     // Koin for Android
     implementation "org.koin:koin-android:$koin_version"
+    // Kotlin Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
 
 
     // Testing

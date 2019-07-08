@@ -22,10 +22,15 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ItemListFragment : Fragment() {
 
     private val viewModel by viewModel<ItemListViewModel>()
+    private val adapter by lazy {
+        ItemsAdapter(itemClickListener = object : OnItemClickListener<Item> {
+            override fun onItemClick(item: Item) = onListItemClick(item)
+        })
+    }
 
     private fun onListItemClick(item: Item) {
         // Navigate to Detail
-        val action = ItemListFragmentDirections.actionItemListFragmentToItemDetailFragment().setItemId(item.id)
+        val action = ItemListFragmentDirections.actionItemListFragmentToItemDetailFragment(item.id)
         findNavController().navigate(action)
     }
 
@@ -33,39 +38,30 @@ class ItemListFragment : Fragment() {
         // Init Recyclerview + Adapter
         recyclerview.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         recyclerview.addItemDecoration(MarginItemDecoration(resources.getDimensionPixelSize(R.dimen.margin)))
-        val adapter = ItemsAdapter(itemClickListener = object : OnItemClickListener<Item> {
-            override fun onItemClick(item: Item) = onListItemClick(item)
-        })
         recyclerview.adapter = adapter
 
         // Observe Data
-        viewModel.items.observe(viewLifecycleOwner,
-            Observer {
-                // Update UI
-                adapter.items = it
-                if (it.isNotEmpty()) recyclerview.scrollToPosition(0)
-                swipeRefreshLayout.isRefreshing = false
-            }
-        )
+        viewModel.items.observe(viewLifecycleOwner, Observer {
+            // Update UI
+            adapter.items = it
+            swipeRefreshLayout.isRefreshing = false
+        })
 
         // Listeners
         swipeRefreshLayout.setOnRefreshListener { viewModel.refreshItems(true) }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.item_list_fragment, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.refreshItems(true)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.item_list_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.refreshItems(true)
         initUI()
     }
 

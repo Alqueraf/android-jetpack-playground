@@ -18,11 +18,15 @@ class ItemDetailFragment : Fragment() {
     private val args: ItemDetailFragmentArgs by navArgs()
 
     private fun initUI() {
-        viewModel.item.observe(viewLifecycleOwner,
-            Observer {
-                title.text = it.title
-                text.text = it.url
-            })
+        viewModel.item.observe(viewLifecycleOwner, Observer {
+            title.text = it.title
+            text.text = it.url
+        })
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.refreshData(args.itemId)
     }
 
     override fun onCreateView(
@@ -32,15 +36,8 @@ class ItemDetailFragment : Fragment() {
         return inflater.inflate(R.layout.item_detail_fragment, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        viewModel =
-//            ViewModelProviders.of(this, ItemDetailViewModelFactory(args.itemId)).get(ItemDetailViewModel::class.java)
-        viewModel.refreshData(args.itemId)
         initUI()
     }
 

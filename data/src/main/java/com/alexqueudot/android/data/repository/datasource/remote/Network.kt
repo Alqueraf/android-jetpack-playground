@@ -3,7 +3,6 @@ package com.alexqueudot.android.data.repository.datasource.remote
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 /**
@@ -35,7 +34,6 @@ private fun retrofitClient(baseUrl: String, httpClient: OkHttpClient): Retrofit 
     val retrofit = Retrofit.Builder()
         .client(httpClient)
         .baseUrl(baseUrl)
-        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     return retrofit

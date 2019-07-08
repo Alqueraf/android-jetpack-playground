@@ -1,11 +1,13 @@
 package com.alexqueudot.android.jetpackplayground.viewmodel
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.alexqueudot.android.core.entity.Item
 import com.alexqueudot.android.core.repository.ItemsRepository
 import com.alexqueudot.android.core.usecase.GetItemDetailsUseCase
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ItemDetailViewModel(private val itemsRepository: ItemsRepository): BaseViewModel() {
@@ -13,11 +15,16 @@ class ItemDetailViewModel(private val itemsRepository: ItemsRepository): BaseVie
     val item = MutableLiveData<Item>()
 
     fun refreshData(itemId: Int) {
-        val disposable = GetItemDetailsUseCase(itemsRepository, itemId)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe(item::postValue) { onError(it) }
-        disposables.add(disposable)
+//        val disposable = GetItemDetailsUseCase(itemsRepository, itemId)
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribeOn(Schedulers.io())
+//            .subscribe(item::postValue) { onError(it) }
+//        disposables.add(disposable)
+
+        viewModelScope.launch {
+            val itemDetails = GetItemDetailsUseCase(itemsRepository, itemId)
+            item.postValue(itemDetails)
+        }
     }
 
     private fun onError(error: Throwable) {

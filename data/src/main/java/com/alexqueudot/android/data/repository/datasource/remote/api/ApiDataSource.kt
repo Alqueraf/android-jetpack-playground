@@ -1,8 +1,6 @@
 package com.alexqueudot.android.data.repository.datasource.remote.api
 
 import com.alexqueudot.android.core.entity.Item
-import io.reactivex.Maybe
-import io.reactivex.Single
 
 
 /**
@@ -11,11 +9,11 @@ import io.reactivex.Single
 
 class ApiDataSource(private val apiEndpoints: ApiEndpoints) {
 
-    fun getItems(): Single<List<Item>> {
-        return apiEndpoints.getQuestions(site = "stackoverflow").map { it.items?.map { it.toItem() } ?: ArrayList() }
+    suspend fun getItems(): List<Item> {
+        return apiEndpoints.getQuestions(site = "stackoverflow").items?.map { it.toItem() } ?: emptyList()
     }
 
-    fun getItem(itemId: Int): Maybe<Item> {
-        return getItems().flatMapMaybe { it.firstOrNull { it.id == itemId }?.let { Maybe.just(it) } ?: Maybe.empty() }
+    suspend fun getItem(itemId: Int): Item? {
+        return getItems().firstOrNull { it.id == itemId }
     }
 }
