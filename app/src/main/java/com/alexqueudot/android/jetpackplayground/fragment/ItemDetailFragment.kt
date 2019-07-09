@@ -6,27 +6,43 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.alexqueudot.android.data.repository.items.error.ItemsError
 import com.alexqueudot.android.jetpackplayground.R
 import com.alexqueudot.android.jetpackplayground.viewmodel.ItemDetailViewModel
 import kotlinx.android.synthetic.main.item_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ItemDetailFragment : Fragment() {
+class ItemDetailFragment : BaseFragment() {
 
     private val viewModel by viewModel<ItemDetailViewModel>()
     private val args: ItemDetailFragmentArgs by navArgs()
 
     private fun initUI() {
+        // Observe Data
         viewModel.item.observe(viewLifecycleOwner, Observer {
             title.text = it.title
             text.text = it.url
+        })
+        // Observe errors
+        viewModel.errors.observe(this, Observer {
+            if (!handleError(it)) {
+                when (it) {
+                    is ItemsError.NotFound -> {
+                        // TODO: Notify user item is unavailable
+                        findNavController().navigateUp()
+                    }
+                }
+            }
         })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.refreshData(args.itemId)
+        savedInstanceState?.let {
+            // Do nothing
+        } ?: viewModel.refreshData(args.itemId)
     }
 
     override fun onCreateView(

@@ -9,7 +9,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alexqueudot.android.core.entity.Item
+import com.alexqueudot.android.data.model.Item
+import com.alexqueudot.android.data.repository.items.error.ItemsError
 import com.alexqueudot.android.jetpackplayground.R
 import com.alexqueudot.android.jetpackplayground.adapter.ItemsAdapter
 import com.alexqueudot.android.jetpackplayground.adapter.MarginItemDecoration
@@ -19,7 +20,7 @@ import kotlinx.android.synthetic.main.item_list_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class ItemListFragment : Fragment() {
+class ItemListFragment : BaseFragment() {
 
     private val viewModel by viewModel<ItemListViewModel>()
     private val adapter by lazy {
@@ -31,7 +32,7 @@ class ItemListFragment : Fragment() {
     private fun onListItemClick(item: Item) {
         // Navigate to Detail
         val action = ItemListFragmentDirections.actionItemListFragmentToItemDetailFragment(item.id)
-        findNavController().navigate(action)
+        navigate(action)
     }
 
     private fun initUI() {
@@ -41,9 +42,20 @@ class ItemListFragment : Fragment() {
         recyclerview.adapter = adapter
 
         // Observe Data
-        viewModel.items.observe(viewLifecycleOwner, Observer {
+        viewModel.items.observe(this, Observer {
             // Update UI
             adapter.items = it
+            swipeRefreshLayout.isRefreshing = false
+        })
+        // Observe errors
+        viewModel.errors.observe(this, Observer {
+            if (!handleError(it)) {
+                when (it) {
+                    is ItemsError.Blacklisted -> {
+                        // TODO: Notify user he has been blacklisted
+                    }
+                }
+            }
             swipeRefreshLayout.isRefreshing = false
         })
 
@@ -53,7 +65,10 @@ class ItemListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.refreshItems(true)
+        savedInstanceState?.let {
+            // Do nothing
+        } ?: viewModel.refreshItems(true)
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

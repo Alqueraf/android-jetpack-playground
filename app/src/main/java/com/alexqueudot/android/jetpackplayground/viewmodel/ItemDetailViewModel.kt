@@ -2,11 +2,10 @@ package com.alexqueudot.android.jetpackplayground.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.alexqueudot.android.core.entity.Item
-import com.alexqueudot.android.core.repository.ItemsRepository
-import com.alexqueudot.android.core.usecase.GetItemDetailsUseCase
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.alexqueudot.android.data.model.Item
+import com.alexqueudot.android.data.repository.items.ItemsRepository
+import com.alexqueudot.android.data.result.onError
+import com.alexqueudot.android.data.result.onSuccess
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -22,8 +21,10 @@ class ItemDetailViewModel(private val itemsRepository: ItemsRepository): BaseVie
 //        disposables.add(disposable)
 
         viewModelScope.launch {
-            val itemDetails = GetItemDetailsUseCase(itemsRepository, itemId)
-            item.postValue(itemDetails)
+            itemsRepository.getItem(itemId)
+                .onSuccess { item.postValue(it) }
+                .onError { onError(it) }
+
         }
     }
 

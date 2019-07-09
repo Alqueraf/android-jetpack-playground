@@ -2,11 +2,12 @@ package com.alexqueudot.android.jetpackplayground.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.alexqueudot.android.core.entity.Item
-import com.alexqueudot.android.core.repository.ItemsRepository
-import com.alexqueudot.android.core.usecase.GetItemListUseCase
+import com.alexqueudot.android.data.model.Item
+import com.alexqueudot.android.data.repository.items.ItemsRepository
+import com.alexqueudot.android.data.repository.items.error.ItemsError
+import com.alexqueudot.android.data.result.onError
+import com.alexqueudot.android.data.result.onSuccess
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class ItemListViewModel(private val itemsRepository: ItemsRepository) : BaseViewModel() {
 
@@ -14,9 +15,26 @@ class ItemListViewModel(private val itemsRepository: ItemsRepository) : BaseView
 
     fun refreshItems(refresh: Boolean = false) {
         viewModelScope.launch {
-            val itemList = GetItemListUseCase(itemsRepository, refresh)
-            items.postValue(itemList)
+            // TODO: state: loading
+            val itemsResponse = itemsRepository.getItems(refresh)
+            // Handle Response
+            itemsResponse
+                .onSuccess { items.postValue(it) }
+                .onError { handleError(it) }
         }
     }
 
+    override fun handleError(error: Throwable): Boolean {
+        return if (super.handleError(error)) {
+            true
+        } else {
+            // Handle specific errors
+            when (error) {
+                is ItemsError.Blacklisted -> {
+                    errors.postValue(ItemsError.Blacklisted)
+                }
+            }
+            true
+        }
+    }
 }

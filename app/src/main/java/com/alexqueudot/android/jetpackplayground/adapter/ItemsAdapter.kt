@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.alexqueudot.android.core.entity.Item
+import com.alexqueudot.android.data.model.Item
 import com.alexqueudot.android.jetpackplayground.R
 import kotlinx.android.synthetic.main.row_item.view.*
 
