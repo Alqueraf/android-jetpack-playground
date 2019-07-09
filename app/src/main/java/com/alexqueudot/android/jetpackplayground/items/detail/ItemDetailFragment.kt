@@ -1,16 +1,16 @@
-package com.alexqueudot.android.jetpackplayground.fragment
+package com.alexqueudot.android.jetpackplayground.items.detail
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.alexqueudot.android.data.repository.items.error.ItemsError
 import com.alexqueudot.android.jetpackplayground.R
-import com.alexqueudot.android.jetpackplayground.viewmodel.ItemDetailViewModel
+import com.alexqueudot.android.jetpackplayground.fragment.BaseFragment
+import com.alexqueudot.android.jetpackplayground.fragment.ItemDetailFragmentArgs
 import kotlinx.android.synthetic.main.item_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

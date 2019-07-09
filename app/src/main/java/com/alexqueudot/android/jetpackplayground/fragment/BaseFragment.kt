@@ -22,7 +22,7 @@ abstract class BaseFragment : Fragment() {
                 true
             }
             is DataError.Unauthorized -> {
-                // TODO: logout
+                // TODO: Navigate to login UI
                 true
             }
             else -> false

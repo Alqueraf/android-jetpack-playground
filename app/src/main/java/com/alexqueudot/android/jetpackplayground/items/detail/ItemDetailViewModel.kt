@@ -1,11 +1,13 @@
-package com.alexqueudot.android.jetpackplayground.viewmodel
+package com.alexqueudot.android.jetpackplayground.items.detail
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.alexqueudot.android.data.model.Item
 import com.alexqueudot.android.data.repository.items.ItemsRepository
+import com.alexqueudot.android.data.repository.items.error.ItemsError
 import com.alexqueudot.android.data.result.onError
 import com.alexqueudot.android.data.result.onSuccess
+import com.alexqueudot.android.jetpackplayground.viewmodel.BaseViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -23,14 +25,27 @@ class ItemDetailViewModel(private val itemsRepository: ItemsRepository): BaseVie
         viewModelScope.launch {
             itemsRepository.getItem(itemId)
                 .onSuccess { item.postValue(it) }
-                .onError { onError(it) }
+                .onError { handleError(it) }
 
         }
     }
 
-    private fun onError(error: Throwable) {
-        // TODO: Update UI
-        Timber.w(error, "Error getting ItemDetail")
+    override fun handleError(error: Throwable): Boolean {
+        return if (super.handleError(error)) {
+            true
+        } else {
+            // Handle specific errors
+            when (error) {
+                is ItemsError.NotFound -> {
+                    errors.postValue(ItemsError.NotFound)
+                    true
+                }
+                else -> {
+                    Timber.w(error, "Error was not handled")
+                    false
+                }
+            }
+        }
     }
 }
 

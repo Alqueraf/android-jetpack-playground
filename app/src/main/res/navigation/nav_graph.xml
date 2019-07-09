@@ -5,7 +5,7 @@
             app:startDestination="@id/itemListFragment">
 
     <fragment android:id="@+id/itemListFragment"
-              android:name="com.alexqueudot.android.jetpackplayground.fragment.ItemListFragment"
+              android:name="com.alexqueudot.android.jetpackplayground.items.ItemListFragment"
               tools:layout="@layout/item_list_fragment" android:label="Jetpack Playground">
         <action
                 android:id="@+id/action_itemListFragment_to_itemDetailFragment"
@@ -16,7 +16,7 @@
                 app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
     <fragment android:id="@+id/itemDetailFragment"
-              android:name="com.alexqueudot.android.jetpackplayground.fragment.ItemDetailFragment"
+              android:name="com.alexqueudot.android.jetpackplayground.items.detail.ItemDetailFragment"
               tools:layout="@layout/item_detail_fragment" android:label="{itemId}">
         <argument android:name="itemId" app:argType="integer"/>
     </fragment>

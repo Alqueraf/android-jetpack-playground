@@ -1,7 +1,7 @@
 package com.alexqueudot.android.jetpackplayground.di
 
-import com.alexqueudot.android.jetpackplayground.viewmodel.ItemDetailViewModel
-import com.alexqueudot.android.jetpackplayground.viewmodel.ItemListViewModel
+import com.alexqueudot.android.jetpackplayground.items.detail.ItemDetailViewModel
+import com.alexqueudot.android.jetpackplayground.items.ItemListViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -15,7 +15,7 @@ val appModule = module {
     // ListViewModel
     viewModel { ItemListViewModel(itemsRepository = get()) }
     // DetailViewModel
-    viewModel { ItemDetailViewModel (itemsRepository = get()) }
+    viewModel { ItemDetailViewModel(itemsRepository = get()) }
 
     // endregion
 }
