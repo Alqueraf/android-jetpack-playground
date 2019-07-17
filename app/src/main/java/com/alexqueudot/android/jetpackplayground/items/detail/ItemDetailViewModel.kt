@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.alexqueudot.android.data.model.Item
 import com.alexqueudot.android.data.repository.items.ItemsRepository
-import com.alexqueudot.android.data.repository.items.error.ItemsError
 import com.alexqueudot.android.data.result.Failure
 import com.alexqueudot.android.data.result.Success
 import com.alexqueudot.android.jetpackplayground.viewmodel.BaseViewModel
@@ -31,30 +30,10 @@ class ItemDetailViewModel(private val itemsRepository: ItemsRepository) : BaseVi
             when (itemResponse) {
                 is Success -> item.postValue(itemResponse.data)
                 is Failure -> {
-                    itemResponse.error?.let {
-                        handleError(it)
-                    }
+                    Timber.w("Received unhandled error ${itemResponse.error?.toString()} from getItem(id)")
                 }
             }
 
-        }
-    }
-
-    override fun handleError(error: Throwable): Boolean {
-        return if (super.handleError(error)) {
-            true
-        } else {
-            // Handle specific errors
-            when (error) {
-                is ItemsError.NotFound -> {
-                    errors.postValue(ItemsError.NotFound)
-                    true
-                }
-                else -> {
-                    Timber.w(error, "Error was not handled")
-                    false
-                }
-            }
         }
     }
 }

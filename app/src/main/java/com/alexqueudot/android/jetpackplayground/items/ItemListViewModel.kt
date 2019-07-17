@@ -5,19 +5,21 @@ import androidx.lifecycle.viewModelScope
 import com.alexqueudot.android.data.model.Item
 import com.alexqueudot.android.data.repository.items.ItemsRepository
 import com.alexqueudot.android.data.repository.items.error.ItemsError
+import com.alexqueudot.android.data.repository.items.error.NetworkUnavailable
 import com.alexqueudot.android.data.result.Failure
 import com.alexqueudot.android.data.result.Success
 import com.alexqueudot.android.jetpackplayground.navigation.ItemsNavigator
+import com.alexqueudot.android.jetpackplayground.utils.SingleLiveEvent
 import com.alexqueudot.android.jetpackplayground.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 class ItemListViewModel(private val itemsRepository: ItemsRepository, private val navigator: ItemsNavigator) :
     BaseViewModel() {
 
     val state: MutableLiveData<ItemListState> = MutableLiveData()
+    val errorEvents = SingleLiveEvent<ItemsError>()
 
     fun loadData(refresh: Boolean = false) {
         viewModelScope.launch {
@@ -29,10 +31,16 @@ class ItemListViewModel(private val itemsRepository: ItemsRepository, private va
             when (itemsResponse) {
                 is Success -> state.postValue(Available(items = itemsResponse.data))
                 is Failure -> {
-                    state.postValue(Unavailable)
-                    itemsResponse.error?.let {
-                        handleError(it)
+                    (itemsResponse.error as? ItemsError)?.let {
+                        when (it) {
+                            is NetworkUnavailable -> state.postValue(Unavailable(reason = NetworkUnavailable))
+                            else -> {
+                                state.postValue(Unavailable())
+                                errorEvents.postValue(it)
+                            }
+                        }
                     }
+                    state.postValue(Unavailable(itemsResponse.error as? ItemsError))
                 }
             }
         }
@@ -40,23 +48,5 @@ class ItemListViewModel(private val itemsRepository: ItemsRepository, private va
 
     fun itemSelected(item: Item) {
         navigator.showDetail(item.id)
-    }
-
-    override fun handleError(error: Throwable): Boolean {
-        return if (super.handleError(error)) {
-            true
-        } else {
-            // Handle specific errors
-            when (error) {
-                is ItemsError.Blacklisted -> {
-                    errors.postValue(ItemsError.Blacklisted)
-                    true
-                }
-                else -> {
-                    Timber.w(error, "Error was not handled")
-                    false
-                }
-            }
-        }
     }
 }

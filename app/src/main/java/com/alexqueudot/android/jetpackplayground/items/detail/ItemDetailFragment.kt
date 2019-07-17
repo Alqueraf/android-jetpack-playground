@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
-import com.alexqueudot.android.data.repository.items.error.ItemsError
 import com.alexqueudot.android.jetpackplayground.R
 import com.alexqueudot.android.jetpackplayground.fragment.BaseFragment
 import kotlinx.android.synthetic.main.item_detail_fragment.*
@@ -22,16 +21,6 @@ class ItemDetailFragment : BaseFragment() {
         viewModel.item.observe(this, Observer {
             title.text = it.title
             text.text = it.url
-        })
-        // Observe errors
-        viewModel.errors.observe(this, Observer {
-            if (!handleError(it)) {
-                when (it) {
-                    is ItemsError.NotFound -> {
-                        // TODO: Show Item Not Available UI
-                    }
-                }
-            }
         })
     }
 

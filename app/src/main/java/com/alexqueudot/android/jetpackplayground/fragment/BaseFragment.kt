@@ -16,17 +16,4 @@ import timber.log.Timber
 
 abstract class BaseFragment : Fragment() {
 
-    fun handleError(error: Throwable): Boolean {
-        return when (error) {
-            is DataError.NetworkUnavailable -> {
-                // TODO: Show No network dialog
-                Timber.i("++ Network connection UNAVAILABLE ++")
-                true
-            }
-            is DataError.Unauthorized -> {
-                false
-            }
-            else -> false
-        }
-    }
 }

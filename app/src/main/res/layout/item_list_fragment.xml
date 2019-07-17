@@ -20,5 +20,16 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
+    <ImageView
+            android:id="@+id/noInternetView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintWidth_percent="0.7"
+            android:scaleType="fitCenter"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/graphic_no_internet"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
