@@ -1,8 +1,7 @@
 package com.alexqueudot.android.jetpackplayground
 
 import android.app.Application
-import com.alexqueudot.android.data.di.dataSourceModule
-import com.alexqueudot.android.data.di.repositoryModule
+import com.alexqueudot.android.data.di.dataModule
 import com.alexqueudot.android.jetpackplayground.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -29,7 +28,7 @@ class App : Application() {
             // Android context
             androidContext(this@App)
             // modules
-            modules(listOf(appModule, repositoryModule, dataSourceModule))
+            modules(listOf(appModule, dataModule))
         }
     }
 }

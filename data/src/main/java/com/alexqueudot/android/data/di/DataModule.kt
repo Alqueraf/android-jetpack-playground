@@ -15,20 +15,17 @@ import retrofit2.Retrofit
  */
 private const val BASE_URL = "https://api.stackexchange.com/2.2/"
 
-private val retrofit: Retrofit =
-    createNetworkClient(BASE_URL, BuildConfig.DEBUG)
-private val itemsApiEndpoints = retrofit.create(ApiEndpoints::class.java)
-
-val dataSourceModule = module {
-    single<MemoryDataSource> { MemoryDataSource() }
-    single<ApiItemsDataSource> {
+val dataModule = module {
+    // ItemsRepository DataSources
+    single { MemoryDataSource() }
+    single {
         ApiItemsDataSource(
-            apiEndpoints = itemsApiEndpoints
+            apiEndpoints = get()
         )
     }
-}
-
-val repositoryModule = module {
+    single<ApiEndpoints> {
+        createNetworkClient(BASE_URL, BuildConfig.DEBUG).create(ApiEndpoints::class.java)
+    }
 
     // single instance of ItemsRepository
     single<ItemsRepository> {
@@ -37,5 +34,4 @@ val repositoryModule = module {
             remoteDataSource = get()
         )
     }
-
 }

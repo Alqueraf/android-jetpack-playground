@@ -5,27 +5,37 @@ import androidx.lifecycle.viewModelScope
 import com.alexqueudot.android.data.model.Item
 import com.alexqueudot.android.data.repository.items.ItemsRepository
 import com.alexqueudot.android.data.repository.items.error.ItemsError
-import com.alexqueudot.android.data.result.onError
-import com.alexqueudot.android.data.result.onSuccess
+import com.alexqueudot.android.data.result.Failure
+import com.alexqueudot.android.data.result.Success
 import com.alexqueudot.android.jetpackplayground.viewmodel.BaseViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-class ItemDetailViewModel(private val itemsRepository: ItemsRepository): BaseViewModel() {
+class ItemDetailViewModel(private val itemsRepository: ItemsRepository) : BaseViewModel() {
 
     val item = MutableLiveData<Item>()
 
-    fun refreshData(itemId: Int) {
-//        val disposable = GetItemDetailsUseCase(itemsRepository, itemId)
+    fun loadData(itemId: Int) {
+//        val disposable = itemsRepository.getItem(itemId)
 //            .observeOn(AndroidSchedulers.mainThread())
 //            .subscribeOn(Schedulers.io())
 //            .subscribe(item::postValue) { onError(it) }
 //        disposables.add(disposable)
 
         viewModelScope.launch {
-            itemsRepository.getItem(itemId)
-                .onSuccess { item.postValue(it) }
-                .onError { handleError(it) }
+            // Get Data
+            val itemResponse = withContext(Dispatchers.IO) { itemsRepository.getItem(itemId) }
+            // Handle Response
+            when (itemResponse) {
+                is Success -> item.postValue(itemResponse.data)
+                is Failure -> {
+                    itemResponse.error?.let {
+                        handleError(it)
+                    }
+                }
+            }
 
         }
     }

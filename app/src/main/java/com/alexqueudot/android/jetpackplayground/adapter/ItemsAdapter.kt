@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.row_item.view.*
 /**
  * Created by alex on 2019-05-21.
  */
-class ItemsAdapter(items: List<Item>? = null, val itemClickListener: OnItemClickListener<Item>? = null) :
+class ItemsAdapter(items: List<Item>? = null, val itemClickListener: ((Item) -> Unit)?) :
     RecyclerView.Adapter<ItemsAdapter.ItemViewHolder>() {
 
     var items: List<Item>? = items
@@ -43,9 +43,9 @@ class ItemsAdapter(items: List<Item>? = null, val itemClickListener: OnItemClick
         val container = itemView
         val textView = itemView.text
 
-        fun bind(item: Item, itemClickListener: OnItemClickListener<Item>?) {
+        fun bind(item: Item, itemClickListener: ((Item) -> Unit)?) {
             container.setOnClickListener {
-                itemClickListener?.onItemClick(item)
+                itemClickListener?.invoke(item)
             }
         }
     }

@@ -12,6 +12,7 @@ import timber.log.Timber
  */
 
 open class BaseViewModel : ViewModel() {
+
     private val disposables = CompositeDisposable()
     val errors = SingleLiveEvent<Throwable>()
 
@@ -23,7 +24,6 @@ open class BaseViewModel : ViewModel() {
                 return true
             }
             is DataError.Unauthorized -> {
-                // TODO: Silent login?
                 errors.postValue(error)
                 return true
             }

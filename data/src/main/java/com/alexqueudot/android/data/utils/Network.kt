@@ -23,12 +23,12 @@ private fun httpClient(debug: Boolean): OkHttpClient {
     }).apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
-    // TODO: Stetho Interceptor
     // OkHttp Client
     val client = OkHttpClient.Builder()
     if (debug) {
         client.addInterceptor(logging)
     }
+    // TODO: Add Stetho Interceptor
     return client.build()
 }
 

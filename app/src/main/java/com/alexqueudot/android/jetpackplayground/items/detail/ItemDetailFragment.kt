@@ -5,12 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.alexqueudot.android.data.repository.items.error.ItemsError
 import com.alexqueudot.android.jetpackplayground.R
 import com.alexqueudot.android.jetpackplayground.fragment.BaseFragment
-import com.alexqueudot.android.jetpackplayground.fragment.ItemDetailFragmentArgs
 import kotlinx.android.synthetic.main.item_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -21,7 +19,7 @@ class ItemDetailFragment : BaseFragment() {
 
     private fun initUI() {
         // Observe Data
-        viewModel.item.observe(viewLifecycleOwner, Observer {
+        viewModel.item.observe(this, Observer {
             title.text = it.title
             text.text = it.url
         })
@@ -30,8 +28,7 @@ class ItemDetailFragment : BaseFragment() {
             if (!handleError(it)) {
                 when (it) {
                     is ItemsError.NotFound -> {
-                        // TODO: Notify user item is unavailable
-                        findNavController().navigateUp()
+                        // TODO: Show Item Not Available UI
                     }
                 }
             }
@@ -42,7 +39,7 @@ class ItemDetailFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         savedInstanceState?.let {
             // Do nothing
-        } ?: viewModel.refreshData(args.itemId)
+        } ?: viewModel.loadData(args.itemId)
     }
 
     override fun onCreateView(
