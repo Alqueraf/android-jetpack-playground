@@ -1,4 +1,4 @@
-package com.alexqueudot.android.jetpackplayground.viewmodel
+package com.alexqueudot.android.jetpackplayground.base
 
 import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable

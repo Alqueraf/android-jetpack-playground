@@ -10,7 +10,7 @@ import com.alexqueudot.android.data.result.Failure
 import com.alexqueudot.android.data.result.Success
 import com.alexqueudot.android.jetpackplayground.navigation.ItemsNavigator
 import com.alexqueudot.android.jetpackplayground.utils.SingleLiveEvent
-import com.alexqueudot.android.jetpackplayground.viewmodel.BaseViewModel
+import com.alexqueudot.android.jetpackplayground.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

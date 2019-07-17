@@ -1,11 +1,9 @@
 package com.alexqueudot.android.jetpackplayground.items
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,7 +12,7 @@ import com.alexqueudot.android.data.repository.items.error.NetworkUnavailable
 import com.alexqueudot.android.jetpackplayground.R
 import com.alexqueudot.android.jetpackplayground.adapter.ItemsAdapter
 import com.alexqueudot.android.jetpackplayground.adapter.MarginItemDecoration
-import com.alexqueudot.android.jetpackplayground.fragment.BaseFragment
+import com.alexqueudot.android.jetpackplayground.base.BaseFragment
 import com.alexqueudot.android.jetpackplayground.navigation.ItemsNavigator
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.item_list_fragment.*
@@ -23,6 +21,8 @@ import org.koin.core.parameter.parametersOf
 
 
 class ItemListFragment : BaseFragment() {
+
+    override fun getLayoutId() = R.layout.item_list_fragment
 
     private val viewModel by viewModel<ItemListViewModel> {
         parametersOf(ItemsNavigator(findNavController()))
@@ -86,10 +86,6 @@ class ItemListFragment : BaseFragment() {
             // Do nothing
         } ?: viewModel.loadData(true)
 
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.item_list_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

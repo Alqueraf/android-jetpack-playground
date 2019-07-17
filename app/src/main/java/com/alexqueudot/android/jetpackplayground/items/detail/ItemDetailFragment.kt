@@ -1,17 +1,17 @@
 package com.alexqueudot.android.jetpackplayground.items.detail
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import com.alexqueudot.android.jetpackplayground.R
-import com.alexqueudot.android.jetpackplayground.fragment.BaseFragment
+import com.alexqueudot.android.jetpackplayground.base.BaseFragment
 import kotlinx.android.synthetic.main.item_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ItemDetailFragment : BaseFragment() {
+
+    override fun getLayoutId() = R.layout.item_detail_fragment
 
     private val viewModel by viewModel<ItemDetailViewModel>()
     private val args: ItemDetailFragmentArgs by navArgs()
@@ -29,13 +29,6 @@ class ItemDetailFragment : BaseFragment() {
         savedInstanceState?.let {
             // Do nothing
         } ?: viewModel.loadData(args.itemId)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.item_detail_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

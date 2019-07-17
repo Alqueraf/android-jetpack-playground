@@ -6,7 +6,7 @@ import com.alexqueudot.android.data.model.Item
 import com.alexqueudot.android.data.repository.items.ItemsRepository
 import com.alexqueudot.android.data.result.Failure
 import com.alexqueudot.android.data.result.Success
-import com.alexqueudot.android.jetpackplayground.viewmodel.BaseViewModel
+import com.alexqueudot.android.jetpackplayground.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
