@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionInflater
+import com.alexqueudot.android.data.repository.items.error.Blacklisted
 import com.alexqueudot.android.data.repository.items.error.NetworkUnavailable
 import com.alexqueudot.android.jetpackplayground.R
 import com.alexqueudot.android.jetpackplayground.adapter.ItemsAdapter
@@ -36,28 +37,22 @@ class ItemListFragment : BaseFragment() {
         // Init Recyclerview
         recyclerview.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            addItemDecoration(MarginItemDecoration(resources.getDimensionPixelSize(R.dimen.margin)))
+            addItemDecoration(MarginItemDecoration(resources.getDimensionPixelSize(R.dimen.small_margin)))
             adapter = itemsAdapter
         }
 
         // Observe Data
+        viewModel.loading.observe(viewLifecycleOwner, Observer { swipeRefreshLayout.isRefreshing = it })
         viewModel.state.observe(viewLifecycleOwner, Observer {
             // Update UI
             when (it) {
-                Loading -> {
-                    swipeRefreshLayout.isRefreshing = true
-                    recyclerview.visibility = VISIBLE
-                    noInternetView.visibility = GONE
-                }
                 is Available -> {
-                    swipeRefreshLayout.isRefreshing = false
                     recyclerview.visibility = VISIBLE
                     noInternetView.visibility = GONE
 
-                    itemsAdapter.items = it.items
+                    itemsAdapter.submitList(it.items)
                 }
                 is Unavailable -> {
-                    swipeRefreshLayout.isRefreshing = false
                     recyclerview.visibility = GONE
                     // Handle errors
                     it.reason?.let { error ->
@@ -73,19 +68,23 @@ class ItemListFragment : BaseFragment() {
         // Observer Error Events
         viewModel.errorEvents.observe(viewLifecycleOwner, Observer {
             view?.let { view ->
-                Snackbar.make(view, getString(R.string.error_message_generic), Snackbar.LENGTH_SHORT).show()
+                val stringResId = when(it) {
+                    is Blacklisted -> R.string.error_message_blacklisted
+                    else -> R.string.error_message_generic
+                }
+                Snackbar.make(view, stringResId, Snackbar.LENGTH_SHORT).show()
             }
         })
 
         // Listeners
-        swipeRefreshLayout.setOnRefreshListener { viewModel.loadData(true) }
+        swipeRefreshLayout.setOnRefreshListener { viewModel.loadData() }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         savedInstanceState?.let {
             // Do nothing
-        } ?: viewModel.loadData(true)
+        } ?: viewModel.loadData()
 
     }
 

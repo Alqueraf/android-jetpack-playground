@@ -9,6 +9,10 @@ import com.alexqueudot.android.data.repository.items.error.ItemsError
 
 sealed class ItemListState
 
-object Loading : ItemListState()
-data class Available(val items: List<Item>) : ItemListState()
-data class Unavailable(val reason: ItemsError? = null) : ItemListState()
+data class Available(
+    val items: List<Item>
+) : ItemListState()
+
+data class Unavailable(
+    val reason: ItemsError? = null
+) : ItemListState()

@@ -19,15 +19,16 @@ import kotlinx.coroutines.withContext
 class ItemListViewModel(private val itemsRepository: ItemsRepository, private val navigator: ItemsNavigator) :
     BaseViewModel() {
 
-    val state: MutableLiveData<ItemListState> = MutableLiveData()
+    val state = MutableLiveData<ItemListState>()
+    val loading = MutableLiveData<Boolean>()
     val errorEvents = SingleLiveEvent<ItemsError>()
 
-    fun loadData(refresh: Boolean = false) {
+    fun loadData() {
         viewModelScope.launch {
             // Set Loading State
-            state.postValue(Loading)
+            loading.postValue(true)
             // Get Data
-            val itemsResponse = withContext(Dispatchers.IO) { itemsRepository.getItems(refresh) }
+            val itemsResponse = withContext(Dispatchers.IO) { itemsRepository.getItems(true) }
             // Handle Response
             when (itemsResponse) {
                 is Success -> state.postValue(Available(items = itemsResponse.data))
@@ -44,6 +45,7 @@ class ItemListViewModel(private val itemsRepository: ItemsRepository, private va
                     state.postValue(Unavailable(itemsResponse.error as? ItemsError))
                 }
             }
+            loading.postValue(false)
         }
     }
 

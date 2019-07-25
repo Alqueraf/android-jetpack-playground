@@ -46,6 +46,10 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
 
+    // Paging
+    testImplementation "androidx.paging:paging-common-ktx:$paging_version"
+    // RxJava support
+    implementation "androidx.paging:paging-rxjava2-ktx:$paging_version"
 
     // Testing
     testImplementation "junit:junit:$junit_version"

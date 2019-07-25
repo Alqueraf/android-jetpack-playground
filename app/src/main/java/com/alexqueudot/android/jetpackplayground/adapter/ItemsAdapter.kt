@@ -5,38 +5,35 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.alexqueudot.android.data.model.Item
 import com.alexqueudot.android.jetpackplayground.R
 import com.alexqueudot.android.jetpackplayground.utils.itemImageTransition
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.row_item.view.*
+import timber.log.Timber
 
 /**
  * Created by alex on 2019-05-21.
  */
-class ItemsAdapter(items: List<Item>? = null, val itemClickListener: ((Item, FragmentNavigator.Extras?) -> Unit)?) :
-    RecyclerView.Adapter<ItemsAdapter.ItemViewHolder>() {
 
-    var items: List<Item>? = items
-        set(value) {
-            if (field != value) {
-                field = value
-                notifyDataSetChanged()
-            }
-        }
+class ItemsAdapter(val itemClickListener: ((Item, FragmentNavigator.Extras?) -> Unit)?) :
+    ListAdapter<Item, ItemsAdapter.ItemViewHolder>(ItemsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.row_item, parent, false)
         return ItemViewHolder(view)
     }
 
-    override fun getItemCount(): Int {
-        return items?.size ?: 0
-    }
-
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        items?.getOrNull(position)?.let { holder.bind(it, itemClickListener) }
+        try {
+            val item = getItem(position)
+            holder.bind(item, itemClickListener)
+        } catch (e: IndexOutOfBoundsException) {
+            Timber.w(e, "Error getting item for position $position")
+        }
     }
 
 
@@ -62,5 +59,15 @@ class ItemsAdapter(items: List<Item>? = null, val itemClickListener: ((Item, Fra
                 itemClickListener?.invoke(item, extras)
             }
         }
+    }
+}
+
+class ItemsDiffCallback : DiffUtil.ItemCallback<Item>() {
+    override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
+        return oldItem == newItem
     }
 }
