@@ -19,7 +19,7 @@ class ApiItemsDataSource(private val apiEndpoints: ApiEndpoints) {
 
     suspend fun getItems(): Result<List<Item>> {
         return try {
-            val data = apiEndpoints.getQuestions(site = "stackoverflow").items?.map { it.toItem() }.orEmpty()
+            val data = apiEndpoints.getCharacters().results?.map { it.toItem() }.orEmpty()
             Success(data = data)
         } catch (e: Throwable) {
             when(e) {

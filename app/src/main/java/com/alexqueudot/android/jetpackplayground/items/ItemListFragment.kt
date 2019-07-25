@@ -40,7 +40,7 @@ class ItemListFragment : BaseFragment() {
         }
 
         // Observe Data
-        viewModel.state.observe(this, Observer {
+        viewModel.state.observe(viewLifecycleOwner, Observer {
             // Update UI
             when (it) {
                 Loading -> {
@@ -70,7 +70,7 @@ class ItemListFragment : BaseFragment() {
             }
         })
         // Observer Error Events
-        viewModel.errorEvents.observe(this, Observer {
+        viewModel.errorEvents.observe(viewLifecycleOwner, Observer {
             view?.let { view ->
                 Snackbar.make(view, getString(R.string.error_message_generic), Snackbar.LENGTH_SHORT).show()
             }

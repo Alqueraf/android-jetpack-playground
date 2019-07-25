@@ -7,21 +7,23 @@ import com.google.gson.annotations.SerializedName
  * Created by alex on 2019-05-20.
  */
 
-data class ApiItem (
-    @SerializedName("question_id")
+data class ApiItem(
+    @SerializedName("id")
     val id: Int,
-    val title: String?,
-    @SerializedName("link")
-    val url: String?,
-    val score: Int?,
-    @SerializedName("is_answered")
-    val isAnswered: Boolean?
+    @SerializedName("name")
+    val name: String?,
+    @SerializedName("status")
+    val status: String?,
+    @SerializedName("species")
+    val species: String?,
+    @SerializedName("type")
+    val type: String?,
+    @SerializedName("gender")
+    val gender: String?,
+    @SerializedName("image")
+    val image: String?
 ) {
     fun toItem(): Item {
-        return Item(id, title, url, score ?: 0, isAnswered ?: false)
+        return Item(id, name ?: "", status ?: "", species ?: "", type ?: "", gender ?: "", image ?: "")
     }
 }
-
-data class ApiItemsResponse (
-    val items: List<ApiItem>?
-)

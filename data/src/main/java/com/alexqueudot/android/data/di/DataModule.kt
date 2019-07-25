@@ -13,7 +13,7 @@ import retrofit2.Retrofit
 /**
  * Created by alex on 2019-05-21.
  */
-private const val BASE_URL = "https://api.stackexchange.com/2.2/"
+private const val BASE_URL = "https://rickandmortyapi.com/api/"//"https://api.stackexchange.com/2.2/"
 
 val dataModule = module {
     // ItemsRepository DataSources

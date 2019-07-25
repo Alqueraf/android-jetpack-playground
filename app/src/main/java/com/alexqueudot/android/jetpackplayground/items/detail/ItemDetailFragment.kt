@@ -18,9 +18,9 @@ class ItemDetailFragment : BaseFragment() {
 
     private fun initUI() {
         // Observe Data
-        viewModel.item.observe(this, Observer {
-            title.text = it.title
-            text.text = it.url
+        viewModel.item.observe(viewLifecycleOwner, Observer {
+            title.text = it.name
+            text.text = it.species
         })
     }
 

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.alexqueudot.android.data.model.Item
 import com.alexqueudot.android.jetpackplayground.R
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.row_item.view.*
 
 /**
@@ -32,18 +33,22 @@ class ItemsAdapter(items: List<Item>? = null, val itemClickListener: ((Item) -> 
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        items?.getOrNull(position)?.let { item ->
-            holder.textView.text = item.title
-            holder.bind(item, itemClickListener)
-        }
+        items?.getOrNull(position)?.let { holder.bind(it, itemClickListener) }
     }
 
 
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val container = itemView
-        val textView = itemView.text
+        private val container = itemView
+        private val avatar = itemView.avatar
+        private val title = itemView.title
+        private val subtitle = itemView.subtitle
 
         fun bind(item: Item, itemClickListener: ((Item) -> Unit)?) {
+            // UI
+            Glide.with(avatar).load(item.image).fitCenter().into(avatar)
+            title.text = item.name
+            subtitle.text = item.species ?: subtitle.resources.getString(R.string.unknown_species)
+            // Clicks
             container.setOnClickListener {
                 itemClickListener?.invoke(item)
             }

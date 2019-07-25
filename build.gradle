@@ -43,12 +43,13 @@ ext {
     rx_android_version = '2.1.1'
     timber_version = '4.7.1'
     lifecycle_version = '2.0.0'
-    navigation_version = '2.1.0-alpha06'
+    navigation_version = '2.1.0-beta02'
+    glide_version = '4.9.0'
 
     // Data
     retrofit_version = '2.6.0'
     okhttp_version = '3.14.2'
 
-    // Core
+
 
 }

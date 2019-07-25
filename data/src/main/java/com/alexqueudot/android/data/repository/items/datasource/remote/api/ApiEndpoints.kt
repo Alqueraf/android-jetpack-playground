@@ -8,6 +8,6 @@ import retrofit2.http.Query
  */
 
 interface ApiEndpoints {
-    @GET("questions/")
-    suspend fun getQuestions(@Query("site") site: String): ApiItemsResponse
+    @GET("character/")
+    suspend fun getCharacters(): ApiResponse<ApiItem>
 }
