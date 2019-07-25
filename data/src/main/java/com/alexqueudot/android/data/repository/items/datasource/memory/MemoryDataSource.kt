@@ -8,19 +8,23 @@ import com.alexqueudot.android.data.model.Item
  */
 
 class MemoryDataSource {
-    private var items: List<Item>? = null
+    private var items = ArrayList<Item>()
 
     suspend fun getItems(): List<Item> {
-        return items ?: emptyList()
+        return items
     }
 
     suspend fun saveItems(items: List<Item>): Boolean {
-        this.items = items
+        if (items.containsAll(this.items)) {
+            this.items = ArrayList(items)
+        } else {
+            this.items.addAll(items)
+        }
         return true
     }
 
     suspend fun getItem(itemId: Int): Item? {
-        return items?.firstOrNull { it.id == itemId }
+        return items.firstOrNull { it.id == itemId }
     }
 
 }

@@ -16,16 +16,16 @@ class DataItemsRepository(
     private val localDataSource: MemoryDataSource
 ) : ItemsRepository {
 
-    override suspend fun getItems(refresh: Boolean): Result<List<Item>> {
-        return if (refresh) {
-            remoteDataSource.getItems().also {
+    override suspend fun getItems(forceRefresh: Boolean, page: Int): Result<List<Item>> {
+        return if (forceRefresh) {
+            remoteDataSource.getItems(page).also {
                 it.onSuccess { localDataSource.saveItems(it) }
             }
         } else {
             localDataSource.getItems().takeIf { it.isNotEmpty() }?.let {
                 Success(data = it)
             } ?: run {
-                remoteDataSource.getItems().also {
+                remoteDataSource.getItems(page).also {
                     it.onSuccess { localDataSource.saveItems(it) }
                 }
             }

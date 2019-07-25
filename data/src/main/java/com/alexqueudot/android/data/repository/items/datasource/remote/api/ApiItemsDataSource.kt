@@ -1,11 +1,11 @@
 package com.alexqueudot.android.data.repository.items.datasource.remote.api
 
 import com.alexqueudot.android.data.model.Item
-import com.alexqueudot.android.data.repository.items.error.*
-import com.alexqueudot.android.data.result.Result
-import com.alexqueudot.android.data.repository.items.error.ItemsError
-import com.alexqueudot.android.data.result.DataError
+import com.alexqueudot.android.data.repository.items.error.Blacklisted
+import com.alexqueudot.android.data.repository.items.error.NetworkUnavailable
+import com.alexqueudot.android.data.repository.items.error.Unknown
 import com.alexqueudot.android.data.result.Failure
+import com.alexqueudot.android.data.result.Result
 import com.alexqueudot.android.data.result.Success
 import retrofit2.HttpException
 import java.io.IOException
@@ -17,9 +17,9 @@ import java.io.IOException
 
 class ApiItemsDataSource(private val apiEndpoints: ApiEndpoints) {
 
-    suspend fun getItems(): Result<List<Item>> {
+    suspend fun getItems(page: Int): Result<List<Item>> {
         return try {
-            val data = apiEndpoints.getCharacters().results?.map { it.toItem() }.orEmpty()
+            val data = apiEndpoints.getCharacters(page).results?.map { it.toItem() }.orEmpty()
             Success(data = data)
         } catch (e: Throwable) {
             when(e) {
@@ -36,13 +36,20 @@ class ApiItemsDataSource(private val apiEndpoints: ApiEndpoints) {
     }
 
     suspend fun getItem(itemId: Int): Result<Item> {
-        return when (val result = getItems()) {
-            is Success -> {
-                result.data.firstOrNull { it.id == itemId }?.let {
-                    Success(data = it)
-                } ?: Failure(error = NotFound)
+        return try {
+            val data = apiEndpoints.getCharacter(itemId).toItem()
+            Success(data = data)
+        } catch (e: Throwable) {
+            when(e) {
+                is IOException -> Failure(error = NetworkUnavailable)
+                is HttpException -> {
+                    when(e.code()) {
+                        403 -> Failure(Blacklisted)
+                        else -> Failure(Unknown(e.message()))
+                    }
+                }
+                else -> Failure(Unknown(e.message))
             }
-            is Failure -> result
         }
     }
 }

@@ -49,7 +49,6 @@ class ItemListFragment : BaseFragment() {
                 is Available -> {
                     recyclerview.visibility = VISIBLE
                     noInternetView.visibility = GONE
-
                     itemsAdapter.submitList(it.items)
                 }
                 is Unavailable -> {
