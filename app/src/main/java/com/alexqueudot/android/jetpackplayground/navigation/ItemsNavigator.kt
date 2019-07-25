@@ -1,6 +1,8 @@
 package com.alexqueudot.android.jetpackplayground.navigation
 
 import androidx.navigation.NavController
+import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import com.alexqueudot.android.jetpackplayground.items.ItemListFragmentDirections
 
 /**
@@ -9,9 +11,9 @@ import com.alexqueudot.android.jetpackplayground.items.ItemListFragmentDirection
 
 class ItemsNavigator(private val navController: NavController) {
 
-    fun showDetail(actionId: Int) {
+    fun showDetail(actionId: Int, extras: FragmentNavigator.Extras? = null) {
         val action = ItemListFragmentDirections.actionItemListFragmentToItemDetailFragment(actionId)
-        navController.navigate(action)
+        extras?.let { navController.navigate(action, extras) } ?: navController.navigate(action)
     }
 
 }

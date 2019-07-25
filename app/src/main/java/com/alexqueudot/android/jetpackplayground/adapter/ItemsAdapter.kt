@@ -3,16 +3,19 @@ package com.alexqueudot.android.jetpackplayground.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.RecyclerView
 import com.alexqueudot.android.data.model.Item
 import com.alexqueudot.android.jetpackplayground.R
+import com.alexqueudot.android.jetpackplayground.utils.itemImageTransition
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.row_item.view.*
 
 /**
  * Created by alex on 2019-05-21.
  */
-class ItemsAdapter(items: List<Item>? = null, val itemClickListener: ((Item) -> Unit)?) :
+class ItemsAdapter(items: List<Item>? = null, val itemClickListener: ((Item, FragmentNavigator.Extras?) -> Unit)?) :
     RecyclerView.Adapter<ItemsAdapter.ItemViewHolder>() {
 
     var items: List<Item>? = items
@@ -43,14 +46,20 @@ class ItemsAdapter(items: List<Item>? = null, val itemClickListener: ((Item) -> 
         private val title = itemView.title
         private val subtitle = itemView.subtitle
 
-        fun bind(item: Item, itemClickListener: ((Item) -> Unit)?) {
-            // UI
+        fun bind(item: Item, itemClickListener: ((Item, FragmentNavigator.Extras?) -> Unit)?) {
+            // Views
             Glide.with(avatar).load(item.image).fitCenter().into(avatar)
+            avatar.transitionName = item.name
             title.text = item.name
             subtitle.text = item.species ?: subtitle.resources.getString(R.string.unknown_species)
-            // Clicks
+            // Events
             container.setOnClickListener {
-                itemClickListener?.invoke(item)
+                // Transition
+                val extras = FragmentNavigatorExtras(
+                    avatar to itemImageTransition(item.id)
+                )
+                // Click
+                itemClickListener?.invoke(item, extras)
             }
         }
     }

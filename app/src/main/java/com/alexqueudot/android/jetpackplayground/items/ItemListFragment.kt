@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.TransitionInflater
 import com.alexqueudot.android.data.repository.items.error.NetworkUnavailable
 import com.alexqueudot.android.jetpackplayground.R
 import com.alexqueudot.android.jetpackplayground.adapter.ItemsAdapter
@@ -90,7 +91,13 @@ class ItemListFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Handle Transitions
+        postponeEnterTransition()
+        sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+        recyclerview.viewTreeObserver.addOnPreDrawListener { startPostponedEnterTransition(); true }
+
         initUI()
+
     }
 
     companion object {

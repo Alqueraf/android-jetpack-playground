@@ -2,6 +2,7 @@ package com.alexqueudot.android.jetpackplayground.items
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.FragmentNavigator
 import com.alexqueudot.android.data.model.Item
 import com.alexqueudot.android.data.repository.items.ItemsRepository
 import com.alexqueudot.android.data.repository.items.error.ItemsError
@@ -46,7 +47,7 @@ class ItemListViewModel(private val itemsRepository: ItemsRepository, private va
         }
     }
 
-    fun itemSelected(item: Item) {
-        navigator.showDetail(item.id)
+    fun itemSelected(item: Item, extras: FragmentNavigator.Extras?) {
+        navigator.showDetail(item.id, extras)
     }
 }
