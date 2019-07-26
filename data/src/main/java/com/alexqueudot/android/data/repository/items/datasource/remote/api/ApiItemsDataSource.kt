@@ -17,15 +17,15 @@ import java.io.IOException
 
 class ApiItemsDataSource(private val apiEndpoints: ApiEndpoints) {
 
-    suspend fun getItems(page: Int): Result<List<Item>> {
+    suspend fun getItems(page: Int?): Result<List<Item>> {
         return try {
-            val data = apiEndpoints.getCharacters(page).results?.map { it.toItem() }.orEmpty()
+            val data = apiEndpoints.getCharacters(page ?: 0).results?.map { it.toItem() }.orEmpty()
             Success(data = data)
         } catch (e: Throwable) {
-            when(e) {
+            when (e) {
                 is IOException -> Failure(error = NetworkUnavailable)
                 is HttpException -> {
-                    when(e.code()) {
+                    when (e.code()) {
                         403 -> Failure(Blacklisted)
                         else -> Failure(Unknown(e.message()))
                     }
@@ -40,10 +40,10 @@ class ApiItemsDataSource(private val apiEndpoints: ApiEndpoints) {
             val data = apiEndpoints.getCharacter(itemId).toItem()
             Success(data = data)
         } catch (e: Throwable) {
-            when(e) {
+            when (e) {
                 is IOException -> Failure(error = NetworkUnavailable)
                 is HttpException -> {
-                    when(e.code()) {
+                    when (e.code()) {
                         403 -> Failure(Blacklisted)
                         else -> Failure(Unknown(e.message()))
                     }

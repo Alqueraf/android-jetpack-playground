@@ -20,6 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.item_list_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import timber.log.Timber
 
 
 class ItemListFragment : BaseFragment() {
@@ -39,51 +40,71 @@ class ItemListFragment : BaseFragment() {
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             addItemDecoration(MarginItemDecoration(resources.getDimensionPixelSize(R.dimen.small_margin)))
             adapter = itemsAdapter
+//            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                    super.onScrolled(recyclerView, dx, dy)
+//                    val visibleItemCount = layoutManager?.childCount ?: 0
+//                    val totalItemCount = layoutManager?.itemCount ?: 0
+//                    val firstVisibleItemPosition =
+//                        (layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: 0
+//                    if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && dy > 0) {
+//                        viewModel.loadNextData()
+//                        Timber.i("Loading more items")
+//                    }
+//                }
+//            })
         }
 
         // Observe Data
-        viewModel.loading.observe(viewLifecycleOwner, Observer { swipeRefreshLayout.isRefreshing = it })
-        viewModel.state.observe(viewLifecycleOwner, Observer {
-            // Update UI
-            when (it) {
-                is Available -> {
-                    recyclerview.visibility = VISIBLE
-                    noInternetView.visibility = GONE
-                    itemsAdapter.submitList(it.items)
-                }
-                is Unavailable -> {
-                    recyclerview.visibility = GONE
-                    // Handle errors
-                    it.reason?.let { error ->
-                        when (error) {
-                            is NetworkUnavailable -> {
-                                noInternetView.visibility = VISIBLE
-                            }
-                        }
-                    }
-                }
-            }
+        viewModel.items.observe(viewLifecycleOwner, Observer {
+            recyclerview.visibility = VISIBLE
+            Timber.i("Got $it items")
+            itemsAdapter.submitList(it)
         })
+        viewModel.loading.observe(viewLifecycleOwner, Observer { swipeRefreshLayout.isRefreshing = it })
+//        viewModel.state.observe(viewLifecycleOwner, Observer {
+//            // Update UI
+//            when (it) {
+//                is Available -> {
+//                    recyclerview.visibility = VISIBLE
+//                    noInternetView.visibility = GONE
+//                    Timber.i("Got items ${it.items}")
+//                    itemsAdapter.submitList(it.items)
+//                }
+//                is Unavailable -> {
+//                    recyclerview.visibility = GONE
+//                    // Handle errors
+//                    it.reason?.let { error ->
+//                        when (error) {
+//                            is NetworkUnavailable -> {
+//                                noInternetView.visibility = VISIBLE
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        })
         // Observer Error Events
         viewModel.errorEvents.observe(viewLifecycleOwner, Observer {
             view?.let { view ->
-                val stringResId = when(it) {
-                    is Blacklisted -> R.string.error_message_blacklisted
-                    else -> R.string.error_message_generic
+                 when (it) {
+                    is Blacklisted -> Snackbar.make(view, R.string.error_message_blacklisted, Snackbar.LENGTH_SHORT).show()
+                    is NetworkUnavailable -> Snackbar.make(view, R.string.error_message_internet, Snackbar.LENGTH_SHORT).show()
+                    else -> Snackbar.make(view, R.string.error_message_generic, Snackbar.LENGTH_SHORT).show()
                 }
-                Snackbar.make(view, stringResId, Snackbar.LENGTH_SHORT).show()
+
             }
         })
 
         // Listeners
-        swipeRefreshLayout.setOnRefreshListener { viewModel.loadData() }
+        swipeRefreshLayout.setOnRefreshListener { viewModel.refresh() }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        savedInstanceState?.let {
-            // Do nothing
-        } ?: viewModel.loadData()
+//        savedInstanceState?.let {
+//            // Do nothing
+//        } ?: viewModel.loadData()
 
     }
 

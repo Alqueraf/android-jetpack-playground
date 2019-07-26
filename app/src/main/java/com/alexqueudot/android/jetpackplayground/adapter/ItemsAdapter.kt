@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +21,7 @@ import timber.log.Timber
  */
 
 class ItemsAdapter(val itemClickListener: ((Item, FragmentNavigator.Extras?) -> Unit)?) :
-    ListAdapter<Item, ItemsAdapter.ItemViewHolder>(ItemsDiffCallback()) {
+    PagedListAdapter<Item, ItemsAdapter.ItemViewHolder>(ItemsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.row_item, parent, false)
@@ -29,8 +30,9 @@ class ItemsAdapter(val itemClickListener: ((Item, FragmentNavigator.Extras?) -> 
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         try {
-            val item = getItem(position)
-            holder.bind(item, itemClickListener)
+            getItem(position)?.let {
+                holder.bind(it, itemClickListener)
+            } ?: holder.bindWithPlaceholders()
         } catch (e: IndexOutOfBoundsException) {
             Timber.w(e, "Error getting item for position $position")
         }
@@ -46,8 +48,8 @@ class ItemsAdapter(val itemClickListener: ((Item, FragmentNavigator.Extras?) -> 
         fun bind(item: Item, itemClickListener: ((Item, FragmentNavigator.Extras?) -> Unit)?) {
             // Views
             Glide.with(avatar).load(item.image).fitCenter().into(avatar)
-            avatar.transitionName = item.name
-            title.text = item.name
+            avatar.transitionName = itemImageTransition(item.id)
+            title.text = String.format("%s - #%d", item.name ?: "", item.id)
             subtitle.text = item.species ?: subtitle.resources.getString(R.string.unknown_species)
             // Events
             container.setOnClickListener {
@@ -58,6 +60,11 @@ class ItemsAdapter(val itemClickListener: ((Item, FragmentNavigator.Extras?) -> 
                 // Click
                 itemClickListener?.invoke(item, extras)
             }
+        }
+        fun bindWithPlaceholders() {
+            title.text = ""
+            subtitle.text = ""
+            // TODO: Placeholder image for avatar
         }
     }
 }

@@ -6,6 +6,8 @@ import com.alexqueudot.android.data.repository.items.ItemsRepository
 import com.alexqueudot.android.data.repository.items.datasource.memory.MemoryDataSource
 import com.alexqueudot.android.data.repository.items.datasource.remote.api.ApiItemsDataSource
 import com.alexqueudot.android.data.repository.items.datasource.remote.api.ApiEndpoints
+import com.alexqueudot.android.data.repository.items.datasource.remote.api.paging.ApiPagingItemsDataSource
+import com.alexqueudot.android.data.repository.items.datasource.remote.api.paging.ApiPagingItemsDataSourceFactory
 import com.alexqueudot.android.data.utils.createNetworkClient
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -23,6 +25,11 @@ val dataModule = module {
             apiEndpoints = get()
         )
     }
+    single {
+        ApiPagingItemsDataSourceFactory(
+            apiEndpoints = get()
+        )
+    }
     single<ApiEndpoints> {
         createNetworkClient(BASE_URL, BuildConfig.DEBUG).create(ApiEndpoints::class.java)
     }
@@ -31,7 +38,8 @@ val dataModule = module {
     single<ItemsRepository> {
         DataItemsRepository(
             localDataSource = get(),
-            remoteDataSource = get()
+            remoteDataSource = get(),
+            pagingDataSourceFactory = get()
         )
     }
 }

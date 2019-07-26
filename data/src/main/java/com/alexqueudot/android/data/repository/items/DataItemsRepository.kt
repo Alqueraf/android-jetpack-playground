@@ -1,9 +1,17 @@
 package com.alexqueudot.android.data.repository.items
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.Transformations.switchMap
+import androidx.paging.PagedList
+import androidx.paging.toLiveData
 import com.alexqueudot.android.data.model.Item
 import com.alexqueudot.android.data.result.Result
 import com.alexqueudot.android.data.repository.items.datasource.memory.MemoryDataSource
 import com.alexqueudot.android.data.repository.items.datasource.remote.api.ApiItemsDataSource
+import com.alexqueudot.android.data.repository.items.datasource.remote.api.paging.ApiPagingItemsDataSource
+import com.alexqueudot.android.data.repository.items.datasource.remote.api.paging.ApiPagingItemsDataSourceFactory
+import com.alexqueudot.android.data.repository.items.datasource.remote.api.paging.PagedOutput
 import com.alexqueudot.android.data.result.Success
 import com.alexqueudot.android.data.result.onSuccess
 
@@ -13,21 +21,26 @@ import com.alexqueudot.android.data.result.onSuccess
 
 class DataItemsRepository(
     private val remoteDataSource: ApiItemsDataSource,
-    private val localDataSource: MemoryDataSource
+    private val localDataSource: MemoryDataSource,
+    private val pagingDataSourceFactory: ApiPagingItemsDataSourceFactory
 ) : ItemsRepository {
 
-    override suspend fun getItems(forceRefresh: Boolean, page: Int): Result<List<Item>> {
-        return if (forceRefresh) {
+    override fun getItemsPaginated(pageSize: Int): PagedOutput<Item> {
+        val livePagedList = pagingDataSourceFactory.toLiveData(pageSize)
+        return PagedOutput(
+            pagedList = livePagedList,
+            refreshing = switchMap(pagingDataSourceFactory.sourceLiveData) { it.initialLoad },
+            dataError = switchMap(pagingDataSourceFactory.sourceLiveData) { it.errors },
+            refresh = { pagingDataSourceFactory.sourceLiveData.value?.invalidate() }
+        )
+    }
+
+    override suspend fun getItems(page: Int?): Result<List<Item>> {
+        return localDataSource.getItems().takeIf { it.isNotEmpty() && page == null }?.let {
+            Success(data = it)
+        } ?: run {
             remoteDataSource.getItems(page).also {
-                it.onSuccess { localDataSource.saveItems(it) }
-            }
-        } else {
-            localDataSource.getItems().takeIf { it.isNotEmpty() }?.let {
-                Success(data = it)
-            } ?: run {
-                remoteDataSource.getItems(page).also {
-                    it.onSuccess { localDataSource.saveItems(it) }
-                }
+                it.onSuccess { it.takeIf { page == null }?.also { localDataSource.saveItems(it) } }
             }
         }
     }

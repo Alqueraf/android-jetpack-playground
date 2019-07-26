@@ -14,4 +14,9 @@ data class ApiInfo(
     val pages: Int?,
     val next: String?,
     val prev: String?
-)
+) {
+    val nextPage: Int?
+        get() = next?.substringAfterLast("page=")?.toIntOrNull()
+    val previousPage: Int?
+        get() = prev?.substringAfterLast("page=")?.toIntOrNull()
+}

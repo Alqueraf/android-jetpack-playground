@@ -15,10 +15,9 @@ class MemoryDataSource {
     }
 
     suspend fun saveItems(items: List<Item>): Boolean {
-        if (items.containsAll(this.items)) {
-            this.items = ArrayList(items)
-        } else {
-            this.items.addAll(items)
+        this.items.apply {
+            clear()
+            addAll(items)
         }
         return true
     }
